@@ -51,6 +51,22 @@ const UserSchema = new mongoose.Schema({
     resetPasswordExpires: { // Expiry date for the reset token
         type: Date
     },
+    refreshTokens: [ // New array to store hashed refresh tokens
+        {
+            token: { // Storing the hashed token
+                type: String,
+                required: true
+            },
+            expiresAt: { // Expiry for this specific refresh token
+                type: Date,
+                required: true
+            },
+            createdAt: { // When this token was generated
+                type: Date,
+                default: Date.now
+            }
+        }
+    ]
 }, {
     timestamps: true // Mongoose will automatically manage createdAt and updatedAt
 });
