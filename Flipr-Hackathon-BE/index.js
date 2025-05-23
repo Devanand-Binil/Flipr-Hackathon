@@ -7,6 +7,10 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import http from 'http';
+import cookieParser from 'cookie-parser';
+import compression from 'compression';
+import fileUpload from 'express-fileupload';
+import mongoSanitize from 'express-mongo-sanitize';
 import { initializeSocket } from './socket/socketHandler.js';
 
 // =======================================================
@@ -15,7 +19,7 @@ import { initializeSocket } from './socket/socketHandler.js';
 dotenv.config();
 const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || 'localhost';
-const NODE_ENV = process.env.NODE_ENV ;
+const NODE_ENV = process.env.NODE_ENV || 'development';
 const ALLOW_ALL_ORIGINS = process.env.ALLOW_ALL_ORIGINS === 'true';
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || [];
 
@@ -29,13 +33,6 @@ const app = express();
 // =======================================================
 //                  Global Middleware
 // =======================================================
-app.use(express.json());
-app.use(helmet());
-app.use(
-  helmet.crossOriginResourcePolicy({
-    policy: ALLOW_ALL_ORIGINS ? 'cross-origin' : 'same-origin',
-  })
-);
 
 app.use(
   cors({
@@ -48,6 +45,23 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(fileUpload({useTempFiles:true}));
+app.use(mongoSanitize());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: {
+      policy: ALLOW_ALL_ORIGINS ? 'cross-origin' : 'same-origin',
+    },
+  })
+);
+
+app.use(cookieParser());
+app.use(compression());
+
+
 
 // Environment-Based Middleware
 if (NODE_ENV === 'development') {
@@ -68,7 +82,7 @@ if (NODE_ENV === 'production') {
 // ---------- Health Check ----------
 app.get('/api/health', (req, res) => {
   res.status(200).json({
-    Message: 'API is running smoothly.',
+    message: 'API is running smoothly.',
     Environment: NODE_ENV,
   });
 });
