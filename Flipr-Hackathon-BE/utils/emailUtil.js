@@ -1,6 +1,6 @@
 // backend/src/utils/emailUtil.js
 import nodemailer from 'nodemailer';
-import { CustomError } from './CustomError.js'; // Import custom error
+import  CustomError  from './CustomError.js'; // Import custom error
 
 // Create a transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({

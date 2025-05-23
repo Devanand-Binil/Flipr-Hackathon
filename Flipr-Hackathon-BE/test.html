@@ -2,40 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Socket.IO Test</title>
+  <title>Socket.IO Chat Test</title>
   <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+    #messages {
+      list-style: none;
+      padding: 0;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    #messages li {
+      padding: 5px 10px;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
 </head>
 <body>
-  <h1>Socket.IO Client Test</h1>
-  <input type="text" id="msg" placeholder="Enter a message" />
-  <button onclick="sendMessage()">Send</button>
+  <h1>Socket.IO Chat Test</h1>
+  
   <ul id="messages"></ul>
-
+  
+  <input type="text" id="msgInput" placeholder="Type your message" />
+  <button id="sendBtn">Send Message</button>
+  
   <script>
+    // Connect to server
     const socket = io("http://localhost:5000", {
       withCredentials: true,
-      transports: ["websocket", "polling"], // <-- Important
+      transports: ["websocket", "polling"],
     });
+
+    // Dummy user data to join a room
+    const userData = {
+      _id: "user1",       // Replace with actual user ID logic if needed
+      name: "Test User"
+    };
 
     socket.on("connect", () => {
-      console.log("✅ Connected with ID:", socket.id);
-    });
-
-    socket.on("message", (msg) => {
-      console.log("📩 Received:", msg);
-      const item = document.createElement("li");
-      item.textContent = msg;
-      document.getElementById("messages").appendChild(item);
+      console.log("✅ Connected, socket ID:", socket.id);
+      // Join user room on server
+      socket.emit("setup", userData);
     });
 
     socket.on("disconnect", () => {
-      console.log("❌ Disconnected");
+      console.log("❌ Disconnected from server");
     });
 
-    function sendMessage() {
-      const msg = document.getElementById("msg").value;
-      socket.emit("message", msg);
-    }
+    // Listen for message received events
+    socket.on("message received", (msg) => {
+      console.log("📩 Message received:", msg);
+      const messagesList = document.getElementById("messages");
+      const item = document.createElement("li");
+      // Show message content or JSON if no content
+      item.textContent = msg.content || JSON.stringify(msg);
+      messagesList.appendChild(item);
+      // Scroll to bottom
+      messagesList.scrollTop = messagesList.scrollHeight;
+    });
+
+    // Send message to server on button click
+    document.getElementById("sendBtn").addEventListener("click", () => {
+      const input = document.getElementById("msgInput");
+      const messageText = input.value.trim();
+      if (!messageText) return;
+
+      // Construct a dummy message object similar to your server expectation
+      const messagePayload = {
+        content: messageText,
+        sender: {
+          _id: userData._id,
+          name: userData.name
+        },
+        chat: {
+          users: [
+            { _id: "user1" }, // Your user (sender)
+            { _id: "user2" }  // Another user who should receive this message
+          ]
+        }
+      };
+
+      // Emit the new message event
+      socket.emit("new message", messagePayload);
+      input.value = ""; // Clear input
+    });
   </script>
 </body>
 </html>

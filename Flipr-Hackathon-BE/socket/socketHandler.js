@@ -31,11 +31,13 @@ export const initializeSocket = (httpServer, options) => {
     });
 
     socket.on("new message", (newMessageReceived) => {
+      console.log("Server got new message:", newMessageReceived);
       const chat = newMessageReceived.chat;
       if (!chat) return;
 
       chat.users.forEach((user) => {
         if (user._id === newMessageReceived.sender._id) return;
+        console.log(`Sending message to user: ${user._id}`);
         socket.to(user._id).emit("message received", newMessageReceived);
       });
     });

@@ -3,7 +3,7 @@ import User from '../models/User.js';
 // Removed direct import of bcrypt and jwt as these are handled by utils/jwt.js and User model pre-hook
 import crypto from 'crypto';
 import { sendEmail } from '../utils/emailUtil.js';
-import { CustomError } from '../utils/CustomError.js';
+import  CustomError  from '../utils/CustomError.js';
 import { generateAuthToken, generateRefreshToken } from '../utils/jwt.js'; // Import new jwt utils
 
 const authService = {
