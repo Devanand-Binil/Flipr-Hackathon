@@ -1,5 +1,6 @@
 import Example from '../models/example.js'; 
 
+
 export const getExampleData = async (req, res) => {
   try {
     const result = await Example.find(); // ✅ Mongoose query
