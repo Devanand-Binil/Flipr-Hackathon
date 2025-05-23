@@ -1,6 +1,6 @@
 // backend/src/controllers/channelController.js
-import channelService from '../services/channelService.js';
-import uploadService from '../services/uploadService.js';
+import channelService from '../services/channel.service.js';
+import uploadService from '../services/upload.service.js';
 import { validateChannelCreation, validateChannelUpdate } from '../utils/validation.js';
 
 export const createChannel = async (req, res, next) => {
