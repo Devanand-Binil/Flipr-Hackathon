@@ -1,7 +1,7 @@
 // backend/src/utils/jwt.js
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto'; // For generating random strings for refresh token
-import { CustomError } from './CustomError.js';
+import  CustomError  from './CustomError.js';
 
 export const generateAuthToken = (userId) => {
     if (!process.env.JWT_SECRET || !process.env.JWT_ACCESS_TOKEN_EXPIRES_IN) { // Changed env var name

@@ -1,5 +1,5 @@
 // backend/src/utils/validation.js
-import { CustomError } from './CustomError.js'; // Import the custom error class
+import CustomError from '../utils/CustomError.js'; // Adjust the import path as necessary
 import validator from 'validator'; // You'll need to install 'validator': npm install validator
 
 // --- User Authentication & Profile Validation ---

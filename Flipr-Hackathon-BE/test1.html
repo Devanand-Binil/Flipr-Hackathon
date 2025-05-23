@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Socket.IO Test - User1</title>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { font-size: 1em; padding: 8px; margin: 5px; }
+    ul { list-style: none; padding-left: 0; max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; }
+    li { background: #f0f0f0; margin: 5px 0; padding: 8px; border-radius: 4px; }
+    .preset-btn { margin: 2px; }
+    #status { margin-bottom: 10px; font-weight: bold; }
+    #typingIndicator { color: #888; font-style: italic; }
+    #header { margin-bottom: 15px; }
+    .timestamp { font-size: 0.8em; color: #666; margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>Socket.IO Test - User1</h1>
+    <div id="status">Status: <span id="connectionStatus">Connecting...</span></div>
+    <div>User ID: <strong>user1</strong>, Username: <strong>User One</strong></div>
+  </div>
+
+  <input id="msgInput" placeholder="Enter message" autocomplete="off" />
+  <button onclick="sendMsg()">Send Message</button>
+  <button onclick="clearMessages()">Clear Chat</button>
+
+  <div>
+    <strong>Quick Messages:</strong><br/>
+    <button class="preset-btn" onclick="sendPreset('Hello!')">Hello!</button>
+    <button class="preset-btn" onclick="sendPreset('How are you?')">How are you?</button>
+    <button class="preset-btn" onclick="sendPreset('Goodbye!')">Goodbye!</button>
+    <button class="preset-btn" onclick="sendPreset('Test message 123')">Test message 123</button>
+  </div>
+
+  <p id="typingIndicator"></p>
+
+  <ul id="messages"></ul>
+
+  <script>
+    const socket = io("http://localhost:5000", { transports: ["websocket", "polling"] });
+    const connectionStatus = document.getElementById("connectionStatus");
+    const typingIndicator = document.getElementById("typingIndicator");
+    const messagesList = document.getElementById("messages");
+    const msgInput = document.getElementById("msgInput");
+
+    let typingTimeout;
+
+    socket.on("connect", () => {
+      connectionStatus.textContent = "Connected";
+      socket.emit("setup", { _id: "user1", name: "User One" });
+    });
+
+    socket.on("disconnect", () => {
+      connectionStatus.textContent = "Disconnected";
+    });
+
+    socket.on("connected", () => {
+      console.log("User1 setup complete");
+    });
+
+    socket.on("message received", (msg) => {
+      appendMessage(`From ${msg.sender.name}: ${msg.content}`);
+    });
+
+    socket.on("typing", () => {
+      typingIndicator.textContent = "User Two is typing...";
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => {
+        typingIndicator.textContent = "";
+      }, 1500);
+    });
+
+    socket.on("stop typing", () => {
+      typingIndicator.textContent = "";
+    });
+
+    function appendMessage(text) {
+      const li = document.createElement("li");
+      const timestamp = new Date().toLocaleTimeString();
+      li.textContent = text;
+      const span = document.createElement("span");
+      span.className = "timestamp";
+      span.textContent = timestamp;
+      li.appendChild(span);
+      messagesList.appendChild(li);
+      messagesList.scrollTop = messagesList.scrollHeight;
+    }
+
+    function sendMsg() {
+      const message = msgInput.value.trim();
+      if (!message) return alert("Enter a message");
+      sendMessage(message);
+      msgInput.value = "";
+      msgInput.focus();
+      stopTyping();
+    }
+
+    function sendPreset(message) {
+      sendMessage(message);
+      stopTyping();
+    }
+
+    function sendMessage(message) {
+      const newMsg = {
+        sender: { _id: "user1", name: "User One" },
+        chat: {
+          users: [
+            { _id: "user1" },  // sender
+            { _id: "user2" }   // receiver
+          ]
+        },
+        content: message
+      };
+      socket.emit("new message", newMsg);
+      appendMessage(`You: ${message}`);
+    }
+
+    function clearMessages() {
+      messagesList.innerHTML = "";
+    }
+
+    function startTyping() {
+      socket.emit("typing", { senderId: "user1" });
+    }
+
+    function stopTyping() {
+      socket.emit("stop typing", { senderId: "user1" });
+   }
+
+    msgInput.addEventListener("input", () => {
+      if (msgInput.value.trim() !== "") {
+        startTyping();
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(() => {
+          stopTyping();
+        }, 1000);
+      } else {
+        stopTyping();
+      }
+    });
+
+    msgInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMsg();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Socket.IO Test - User2</title>
+  <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { font-size: 1em; padding: 8px; margin: 5px; }
+    ul { list-style: none; padding-left: 0; }
+    li { background: #e0f7fa; margin: 5px 0; padding: 8px; border-radius: 4px; }
+    .preset-btn { margin: 2px; }
+  </style>
+</head>
+<body>
+  <h1>Socket.IO Test - User2</h1>
+
+  <input id="msgInput" placeholder="Enter message" autocomplete="off" />
+  <button onclick="sendMsg()">Send Message</button>
+
+  <div>
+    <strong>Quick Messages:</strong><br/>
+    <button class="preset-btn" onclick="sendPreset('Hey there!')">Hey there!</button>
+    <button class="preset-btn" onclick="sendPreset('What’s up?')">What’s up?</button>
+    <button class="preset-btn" onclick="sendPreset('See you later!')">See you later!</button>
+    <button class="preset-btn" onclick="sendPreset('Testing 456')">Testing 456</button>
+  </div>
+
+  <ul id="messages"></ul>
+
+  <script>
+    const socket = io("http://localhost:5000", { transports: ["websocket", "polling"] });
+
+    socket.on("connect", () => {
+      console.log("User2 connected:", socket.id);
+      socket.emit("setup", { _id: "user2", name: "User Two" });
+    });
+
+    socket.on("connected", () => {
+      console.log("User2 setup complete");
+    });
+
+    socket.on("message received", (msg) => {
+      console.log("User2 received message:", msg);
+      const li = document.createElement("li");
+      li.textContent = `From ${msg.sender.name}: ${msg.content}`;
+      document.getElementById("messages").appendChild(li);
+    });
+
+    function sendMsg() {
+      const input = document.getElementById("msgInput");
+      const message = input.value.trim();
+      if (!message) return alert("Enter a message");
+      sendMessage(message);
+      input.value = "";
+      input.focus();
+    }
+
+    function sendPreset(message) {
+      sendMessage(message);
+    }
+
+    function sendMessage(message) {
+      const newMsg = {
+        sender: { _id: "user2", name: "User Two" },
+        chat: {
+          users: [
+            { _id: "user2" },  // sender
+            { _id: "user1" }   // receiver
+          ]
+        },
+        content: message
+      };
+      socket.emit("new message", newMsg);
+    }
+  </script>
+</body>
+</html>

@@ -136,7 +136,7 @@ connectDB();
 //          Server & Socket.IO Initialization
 // =======================================================
 const server = http.createServer(app);
-const io = new initializeSocket(server, {
+const io =  initializeSocket(server, {
   cors: {
     origin: ALLOW_ALL_ORIGINS ? '*' : ALLOWED_ORIGINS,
     credentials: true,
