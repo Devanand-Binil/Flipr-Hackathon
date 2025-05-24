@@ -10,8 +10,8 @@ import { useState } from "react";
 import Picture from "./Picture";
 import axios from "axios";
 
-const cloud_secret = process.env.REACT_APP_CLOUD_SECRET;
-const cloud_name = process.env.REACT_APP_CLOUD_NAME;
+const cloud_secret = import.meta.env.VITE_CLOUD_SECRET;
+const cloud_name = import.meta.env.VITE_CLOUD_NAME;
 
 export default function RegisterForm() {
   const dispatch = useDispatch();
