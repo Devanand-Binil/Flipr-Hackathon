@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const CONVERSATION_ENDPOINT = `${process.env.REACT_APP_API_ENDPOINT}/conversation`;
-const MESSAGE_ENDPOINT = `${process.env.REACT_APP_API_ENDPOINT}/message`;
+const CONVERSATION_ENDPOINT = `${import.meta.env.VITE_APP_API_ENDPOINT}/conversation`;
+const MESSAGE_ENDPOINT = `${import.meta.env.VITE_API_ENDPOINT}/message`;
 
 const initialState = {
   status: "",
