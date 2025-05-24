@@ -88,7 +88,7 @@ app.get('/api/health', (req, res) => {
 });
 
 import mainRouter from './routes/mainRouter.js';
-app.use('/api', mainRouter);
+app.use('/api/v1', mainRouter);
 
 
 // =======================================================
