@@ -1,0 +1,79 @@
+import React from 'react';
+import { useSelector } from 'react-redux';
+import {
+  DotsIcon,
+  SearchLargeIcon,
+  CallIcon,
+  VideoCallIcon
+} from '../../../svg';
+import { capitalize } from '../../../utils/string';
+import { getConversationName, getConversationPicture } from '../../../utils/chat';
+import SocketContext from "../../../context/SocketContext";
+
+const ChatHeader = ({ online, callUser, socket }) => {
+  const { activeConversation } = useSelector((state) => state.chat);
+  const { user } = useSelector((state) => state.user);
+
+  return (
+    <div className="h-[59px] dark:bg-dark_bg_2 flex items-center p-4 select-none">
+      <div className="w-full flex items-center justify-between">
+        {/* Left side */}
+        <div className="flex items-center gap-x-4">
+          <button className="btn hover:bg-dark_hover_1 focus:outline-none">
+            <img
+              src={
+                activeConversation.isGroup
+                  ? activeConversation.picture
+                  : getConversationPicture(user, activeConversation.users)
+              }
+              alt="Conversation"
+              className="w-full h-full rounded-full object-cover"
+            />
+          </button>
+          <div className="flex flex-col">
+            <h1 className="dark:text-white text-md font-bold">
+              {activeConversation.isGroup
+                ? activeConversation.name
+                : capitalize(getConversationName(user, activeConversation.users).split(" ")[0])}
+            </h1>
+            <span className="text-xs dark:text-dark_svg_2">
+              {online ? "online" : ""}
+            </span>
+          </div>
+        </div>
+
+        {/* Right side */}
+        <ul className="flex items-center gap-x-2.5">
+          <li onClick={() => callUser()}>
+            <button className="btn hover:bg-dark_hover_1 focus:outline-none">
+              <VideoCallIcon />
+            </button>
+          </li>
+          <li>
+            <button className="btn hover:bg-dark_hover_1 focus:outline-none">
+              <CallIcon />
+            </button>
+          </li>
+          <li>
+            <button className="btn hover:bg-dark_hover_1 focus:outline-none">
+              <SearchLargeIcon className="dark:fill-dark_svg_1" />
+            </button>
+          </li>
+          <li>
+            <button className="btn hover:bg-dark_hover_1 focus:outline-none">
+              <DotsIcon className="dark:fill-dark_svg_1" />
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+const ChatHeaderWithSocket = (props) => (
+  <SocketContext.Consumer>
+    {(socket) => <ChatHeader {...props} socket={socket} />}
+  </SocketContext.Consumer>
+);
+
+export default ChatHeaderWithSocket;
