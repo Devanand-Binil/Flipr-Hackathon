@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 
 //Pages import
-// import Home from "./pages/home";
+import Home from "./pages/home";
 import Login from "./pages/login";
 import Register from "./pages/register";
 
@@ -26,13 +26,13 @@ function App() {
       <SocketContext.Provider value={socket}>
         <Router>
           <Routes>
-            {/* <Route
+            <Route
               exact
               path="/"
               element={
                 token ? <Home socket={socket} /> : <Navigate to="/login" />
               }
-            /> */}
+            />
             <Route
               exact
               path="/login"
