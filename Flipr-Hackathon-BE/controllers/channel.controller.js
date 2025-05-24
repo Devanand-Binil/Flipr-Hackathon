@@ -8,11 +8,13 @@ export const createChannel = async (req, res, next) => {
         const currentUserId = req.user.id; // User creating the channel
         const { name, type, participants, description } = req.body;
 
-        validateChannelCreation({ name, type, participants });
-
         // Ensure current user is included in participants if creating a private/group chat
         const finalParticipants = [...new Set([...participants, currentUserId])];
+        console.log('Final Participants:', finalParticipants);
 
+        // Validate channel creation data
+        validateChannelCreation({ name, type, participants: finalParticipants });
+        
         const newChannel = await channelService.createChannel({
             name,
             type,
