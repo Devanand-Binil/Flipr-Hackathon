@@ -5,7 +5,7 @@ import AuthInput from "./AuthInput";
 import { useDispatch, useSelector } from "react-redux";
 import PulseLoader from "react-spinners/PulseLoader";
 import { Link, useNavigate } from "react-router-dom";
-import userSlice, { loginUser, registerUser } from "../../features/userSlice";
+import  { loginUser } from "../../features/userSlice";
 
 export default function LoginForm() {
   const dispatch = useDispatch();
@@ -14,12 +14,13 @@ export default function LoginForm() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({ resolver: yupResolver(signInSchema) });
   const onSubmit = async (data) => {
     let res = await dispatch(loginUser({ ...data }));
-    if (res?.payload?.user) navigate("/");
+    if (res?.payload?.user){ 
+      localStorage.setItem("user", JSON.stringify(res.payload.user)); // <-- ADD THIS
+      navigate("/");}
   };
 
   return (
@@ -67,7 +68,7 @@ export default function LoginForm() {
           <p className="flex flex-col items-center justify-center mt-10 text-center text-md dark:text-dark_text_1 ">
             <span> Not have an account? </span>
             <Link
-              href="/register"
+              to="/register"
               className=" hover:underline cursor-pointer transition ease-in duration-300"
             >
               Sign Up

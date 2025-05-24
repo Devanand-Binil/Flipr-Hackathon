@@ -1,9 +1,11 @@
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { open_create_conversations } from "../../../features/chatSlice";
 import {
   getConversationId,
   getConversationName,
   getConversationPicture,
+  checkOnlineStatus,
 } from "../../../utils/chat";
 import { dateHandler } from "../../../utils/date";
 import { capitalize } from "../../../utils/string";
@@ -13,7 +15,7 @@ function Conversation({ convo, socket, online, typing }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { activeConversation } = useSelector((state) => state.chat);
-  const { token } = user;
+  const token = user?.token;
 
   const values = {
     receiver_id: getConversationId(user, convo.users),
@@ -22,12 +24,18 @@ function Conversation({ convo, socket, online, typing }) {
   };
 
   const openConversation = async () => {
-    const newConvo = await dispatch(open_create_conversations(values));
-    socket.emit("join conversation", newConvo.payload._id);
+    try {
+      const newConvo = await dispatch(open_create_conversations(values));
+      if (newConvo?.payload?._id) {
+        socket.emit("join conversation", newConvo.payload._id);
+      }
+    } catch (err) {
+      console.error("Error opening conversation:", err);
+    }
   };
 
-  const isActive = convo._id === activeConversation._id;
-  const latestMsg = convo.latestMessage?.message || "";
+  const isActive = convo?._id === activeConversation?._id;
+  const latestMsg = convo?.latestMessage?.message || "";
 
   return (
     <li
@@ -45,11 +53,11 @@ function Conversation({ convo, socket, online, typing }) {
         >
           <img
             src={
-              convo.isGroup
+              convo?.isGroup
                 ? convo.picture
-                : getConversationPicture(user, convo.users)
+                : getConversationPicture(user, convo?.users)
             }
-            alt={convo.name}
+            alt={convo?.name}
             className="w-full h-full object-cover"
           />
         </div>
@@ -58,19 +66,19 @@ function Conversation({ convo, socket, online, typing }) {
         <div className="flex-1 flex flex-col">
           <div className="flex items-center justify-between">
             <h1 className="font-semibold text-base truncate">
-              {convo.isGroup
-                ? convo.name
-                : capitalize(getConversationName(user, convo.users))}
+              {convo?.isGroup
+                ? convo?.name
+                : capitalize(getConversationName(user, convo?.users))}
             </h1>
             <span className="text-xs text-gray-400">
-              {convo.latestMessage?.createdAt
+              {convo?.latestMessage?.createdAt
                 ? dateHandler(convo.latestMessage.createdAt)
                 : ""}
             </span>
           </div>
 
           <div className="text-sm text-gray-400 mt-1 truncate">
-            {typing === convo._id ? (
+            {typing === convo?._id ? (
               <span className="text-green_1">Typing...</span>
             ) : latestMsg.length > 25 ? (
               `${latestMsg.substring(0, 25)}...`

@@ -5,7 +5,7 @@ import AuthInput from "./AuthInput";
 import { useDispatch, useSelector } from "react-redux";
 import PulseLoader from "react-spinners/PulseLoader";
 import { Link, useNavigate } from "react-router-dom";
-import userSlice, { registerUser } from "../../features/userSlice";
+import { registerUser } from "../../features/userSlice";
 import { useState } from "react";
 import Picture from "./Picture";
 import axios from "axios";
@@ -22,7 +22,6 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({ resolver: yupResolver(signUpSchema) });
   const onSubmit = async (data) => {
@@ -70,7 +69,7 @@ export default function RegisterForm() {
         {/*Form*/}
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
           <AuthInput
-            name="name"
+            name="username"
             type="text"
             placeholder="Full name"
             register={register}
@@ -124,7 +123,7 @@ export default function RegisterForm() {
           <p className="flex flex-col items-center justify-center mt-10 text-center text-md dark:text-dark_text_1 ">
             <span> Have an account</span>
             <Link
-              href="login"
+              to="/login"
               className=" hover:underline cursor-pointer transition ease-in duration-300"
             >
               Sign In
