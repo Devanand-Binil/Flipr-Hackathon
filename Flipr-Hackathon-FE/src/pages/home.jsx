@@ -19,6 +19,7 @@ function Home({ socket }) {
   useEffect(() => {
     socket.emit("join", user._id);
     socket.on("get-online-users", (users) => {
+      console.log("Online users:", users);
       setOnlineUsers(users);
     });
   }, [user]);

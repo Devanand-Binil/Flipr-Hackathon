@@ -69,7 +69,7 @@ export default function RegisterForm() {
         {/*Form*/}
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
           <AuthInput
-            name="username"
+            name="user"
             type="text"
             placeholder="Full name"
             register={register}

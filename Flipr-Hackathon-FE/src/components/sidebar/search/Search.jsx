@@ -11,14 +11,16 @@ const Search = ({ searchLength, setSearchResults }) => {
   const handleSearch = async (e) => {
     if (e.target.value && e.key === 'Enter') {
       try {
+        console.log('Searching for:', e.target.value);
         const { data } = await axios.get(
-          `${import.meta.VITE_API_ENDPOINT}/users?search=${e.target.value}`,
+          `${import.meta.env.VITE_API_ENDPOINT}/user?search=${e.target.value}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+        console.log('Search results:', data);
         setSearchResults(data);
       } catch (error) {
         console.log(error.response.data.error.message);

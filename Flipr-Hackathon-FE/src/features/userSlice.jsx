@@ -5,7 +5,7 @@ const AUTH_ENDPOINT = `${import.meta.env.VITE_API_ENDPOINT}/auth`;
 
 let parsedUser = {
   id: "",
-  username: "",
+  name: "",
   email: "",
   picture: "",
   status: "",
@@ -54,7 +54,6 @@ export const loginUser = createAsyncThunk(
       return {
         user: {
           ...data.user,
-          token: data.accessToken, // <-- this is the important part
         },
       };
     } catch (error) {

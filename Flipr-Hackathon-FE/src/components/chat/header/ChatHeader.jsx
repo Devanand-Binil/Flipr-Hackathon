@@ -12,35 +12,44 @@ import SocketContext from "../../../context/SocketContext";
 
 const ChatHeader = ({ online, callUser, socket }) => {
   const { activeConversation } = useSelector((state) => state.chat);
+  console.log("Active conversation in ChatHeader:", activeConversation);
+  console.log("Users in activeConversation:", activeConversation.users);
   const { user } = useSelector((state) => state.user);
+  console.log("User in ChatHeader:", user);
+  if (!activeConversation || !user) return null; // or show a loading state
 
   return (
     <div className="h-[59px] dark:bg-dark_bg_2 flex items-center p-4 select-none">
       <div className="w-full flex items-center justify-between">
         {/* Left side */}
-        <div className="flex items-center gap-x-4">
-          <button className="btn hover:bg-dark_hover_1 focus:outline-none">
-            <img
-              src={
-                activeConversation.isGroup
-                  ? activeConversation.picture
-                  : getConversationPicture(user, activeConversation.users)
-              }
-              alt="Conversation"
-              className="w-full h-full rounded-full object-cover"
-            />
-          </button>
-          <div className="flex flex-col">
-            <h1 className="dark:text-white text-md font-bold">
-              {activeConversation.isGroup
-                ? activeConversation.name
-                : capitalize(getConversationName(user, activeConversation.users).split(" ")[0])}
-            </h1>
-            <span className="text-xs dark:text-dark_svg_2">
-              {online ? "online" : ""}
-            </span>
-          </div>
-        </div>
+        {activeConversation ? (
+  <div className="flex items-center gap-x-4">
+    <button className="btn hover:bg-dark_hover_1 focus:outline-none">
+      <img
+        src={
+          activeConversation.isGroup
+            ? activeConversation.picture
+            : getConversationPicture(user, activeConversation.users)
+        }
+        alt="Conversation"
+        className="w-full h-full rounded-full object-cover"
+      />
+    </button>
+    <div className="flex flex-col">
+      <h1 className="dark:text-white text-md font-bold">
+        {activeConversation.isGroup
+          ? activeConversation.name
+          : capitalize(getConversationName(user, activeConversation.users).split(" ")[0])}
+      </h1>
+      <span className="text-xs dark:text-dark_svg_2">
+        {online ? "online" : ""}
+      </span>
+    </div>
+  </div>
+) : (
+  <div className="text-white">No conversation selected</div>
+)}
+
 
         {/* Right side */}
         <ul className="flex items-center gap-x-2.5">

@@ -7,7 +7,7 @@ export const searchUsers = async(req,res,next)=>{
         const keyword = req.query.search;
         if (!keyword){
             logger.error("Please add a search query first.");
-            throw createHttpError.BadRequest('Something went wrong!');
+            throw createHttpError.BadRequest(' Search error Something went wrong!');
         }
         const users=await searchUsersService(keyword, req.user.userId,);
         res.status(200).json(users);

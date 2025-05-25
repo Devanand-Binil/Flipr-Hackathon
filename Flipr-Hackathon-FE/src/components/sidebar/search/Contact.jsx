@@ -4,6 +4,7 @@ import { open_create_conversations } from '../../../features/chatSlice';
 import SocketContext from "../../../context/SocketContext";
 
 function Contact({ contact, setSearchResults, socket }) {
+  //console.log("Contact object:", contact); // <-- add this to inspect data
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { token } = user;
@@ -14,7 +15,9 @@ function Contact({ contact, setSearchResults, socket }) {
   };
 
   const openConversation = async () => {
+    console.log("Opening conversation with", contact.username);
     let newConvo = await dispatch(open_create_conversations(values));
+    console.log("New conversation data outside:", newConvo);
     socket.emit('join conversation', newConvo.payload._id);
     setSearchResults([]);
   };
@@ -31,17 +34,19 @@ function Contact({ contact, setSearchResults, socket }) {
             src={contact.picture}
             alt={contact.name}
             className="w-full h-full object-cover"
-          />
+          /> 
         </div>
 
         {/* Name and Status */}
         <div className="flex flex-col overflow-hidden">
           <h1 className="font-semibold text-[15px] truncate dark:text-dark_text_1">
-            {contact.name}
+            {contact.username}
           </h1>
+          {/*}
           <p className="text-sm text-gray-400 truncate">
             {contact.status || "No status available"}
           </p>
+           */}
         </div>
       </div>
 

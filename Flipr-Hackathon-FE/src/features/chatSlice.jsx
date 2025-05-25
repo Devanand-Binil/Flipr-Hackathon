@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const CONVERSATION_ENDPOINT = `${import.meta.env.VITE_APP_API_ENDPOINT}/conversation`;
+const CONVERSATION_ENDPOINT = `${import.meta.env.VITE_API_ENDPOINT}/conversation`;
 const MESSAGE_ENDPOINT = `${import.meta.env.VITE_API_ENDPOINT}/message`;
 
 const initialState = {
@@ -18,11 +18,13 @@ export const getConversations = createAsyncThunk(
   "conversation/all",
   async (token, { rejectWithValue }) => {
     try {
+      console.log("Fetching conversations with token:", token);
       const { data } = await axios.get(CONVERSATION_ENDPOINT, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log("Conversations fetched:", data);
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data.error.message);
@@ -77,6 +79,7 @@ export const open_create_conversations = createAsyncThunk(
   async (values, { rejectWithValue }) => {
     const { token, receiver_id, isGroup } = values;
     try {
+      console.log("endpoint:", CONVERSATION_ENDPOINT);
       const { data } = await axios.post(
         CONVERSATION_ENDPOINT,
         { receiver_id, isGroup },
