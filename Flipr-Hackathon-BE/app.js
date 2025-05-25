@@ -29,7 +29,7 @@ app.use(express.json());
 app.use(express.urlencoded({extends:true}));
 
 // use for mongo-sanitize (secures the mongodb from injections to manipulate db)
-app.use(mongoSanitize());
+//app.use(mongoSanitize());
 
 //enable cookie parser
 app.use(cookieParser());
@@ -44,7 +44,7 @@ app.use(fileUpload({
 }));
 
 //cors
-app.use(cors());
+//app.use(cors());
 
 //routes
 app.use("/api/v1",routes)

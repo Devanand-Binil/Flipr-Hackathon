@@ -21,7 +21,7 @@ export default function CreateGroup({ setShowCreateGroup }) {
       setSearchResults([]);
       try {
         const { data } = await axios.get(
-          `${process.env.REACT_APP_API_ENDPOINT}/user?search=${e.target.value}`,
+          `${import.meta.env.VITE_API_ENDPOINT}/user?search=${e.target.value}`,
           {
             headers: {
               Authorization: `Bearer ${user.token}`,
@@ -29,11 +29,13 @@ export default function CreateGroup({ setShowCreateGroup }) {
           }
         );
         if (data.length > 0) {
+          console.log("Search results:", data);
           const tempArray = data.map((u) => ({
             value: u._id,
-            label: u.name,
+            label: u.username,
             picture: u.picture,
           }));
+          console.log("Formatted search results:", tempArray);
           setSearchResults(tempArray);
         } else {
           setSearchResults([]);
