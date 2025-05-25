@@ -1,5 +1,7 @@
-// server.js
-
+// index.js
+// =======================================================
+//                   Imports
+// =======================================================
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -14,130 +16,194 @@ import mongoose from "mongoose";
 import { Server } from "socket.io";
 
 // Custom modules
-import routes from "./routes/index.js";
+import mainRouter from "./routes/mainRouter.js";
 import logger from "./configs/logger.config.js";
 import SocketServer from "./SocketServer.js";
 
-// =============================
-// Load .env Variables
-// =============================
-dotenv.config();
-const { DATABASE_URL, PORT = 8000, CLIENT_ENDPOINT, NODE_ENV } = process.env;
 
-// =============================
-// Initialize Express App
-// =============================
+// =======================================================
+//               Environment Configuration
+// =======================================================
+dotenv.config();
+const PORT = process.env.PORT || 8000;
+const HOST = process.env.HOST || "localhost";
+const NODE_ENV = process.env.NODE_ENV;
+const CLIENT_ENDPOINT = process.env.CLIENT_ENDPOINT;
+const DATABASE_URL = process.env.DATABASE_URL;
+const ALLOW_ALL_ORIGINS = process.env.ALLOW_ALL_ORIGINS === "true";
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(",").map((o) => o.trim()) || [];
+
+
+// =======================================================
+//                  App Initialization
+// =======================================================
 const app = express();
 
-// =============================
-// Middleware
-// =============================
 
-if (NODE_ENV !== "production") {
-  app.use(morgan("dev")); // HTTP request logger
-}
+// =======================================================
+//                  Global Middleware
+// =======================================================
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(helmet());
+app.use(
+  helmet.crossOriginResourcePolicy({
+    policy: ALLOW_ALL_ORIGINS ? "cross-origin" : "same-origin",
+  })
+);
 
-app.use(helmet()); // Security headers
-app.use(express.json()); // JSON body parser
-app.use(express.urlencoded({ extended: true })); // URL-encoded body parser
-//app.use(mongoSanitize()); // Prevent NoSQL injection
-//app.use(cookieParser()); // Parse cookies
-//app.use(compression()); // Compress response bodies
-/*app.use(
+//app.use(mongoSanitize()); 
+app.use(cookieParser()); 
+app.use(compression()); 
+app.use(
   fileUpload({
     useTempFiles: true,
   })
 );
-*/
-// Enable CORS
+
 app.use(
   cors({
-    origin: CLIENT_ENDPOINT,
+    origin: (origin, callback) => {
+      if (ALLOW_ALL_ORIGINS || !origin || ALLOWED_ORIGINS.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
 
-// =============================
-// Routes
-// =============================
-app.use("/api/v1", routes);
+// Environment-Based Middleware
+if (NODE_ENV === "development") {
+  app.use(morgan("dev"));
+  console.log("🛠️ Development Mode: Logging enabled via Morgan");
+}
 
-// =============================
-// Error Handling
-// =============================
+if (NODE_ENV === "production") {
+  console.log("🚀 Production Mode: Optimized for performance");
+  app.set("trust proxy", 1); // For reverse proxies like Heroku, Nginx
+}
 
-// 404 Handler
-app.use((req, res, next) => {
-  next(createHttpError.NotFound("This route does not exist"));
-});
 
-// General Error Handler
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({
-    error: {
-      status: err.status || 500,
-      message: err.message,
-    },
+// =======================================================
+//                        Routes
+// =======================================================
+
+// ---------- Health Check ----------
+app.get("/api/health", (req, res) => {
+  res.status(200).json({
+    message: "API is running",
+    environment: NODE_ENV,
+    uptime: process.uptime(),
+    timestamp: new Date(),
   });
 });
 
-// =============================
-// MongoDB Connection
-// =============================
+app.use("/api/v1", mainRouter);
 
-mongoose
-  .connect(DATABASE_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => logger.info("✅ Connected to MongoDB"))
-  .catch((err) => {
+
+// =======================================================
+//                     Error Handling
+// =======================================================
+
+// 404 Route Not Found
+app.use((req, res, next) => {
+  // Using http-errors to create the error object
+  next(createHttpError.NotFound("🚷Route not found🚷"));
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  if (err.message === "Not allowed by CORS") {
+    return res.status(403).json({
+      success: false,
+      statusCode: 403,
+      error: "✋Request blocked: Origin not allowed by CORS policy.",
+    });
+  }
+
+  const statusCode = err.status || 500;
+  const message = err.message || "Internal Server Error";
+
+  res.status(statusCode).json({
+    success: false,
+    statusCode: statusCode,
+    error: message,
+    ...(NODE_ENV === "development" && { stack: err.stack }),
+  });
+});
+
+
+// =======================================================
+//                 Database Configuration
+// =======================================================
+const connectDB = async () => {
+  try {
+    await mongoose.connect(DATABASE_URL);
+    logger.info("✅ Connected to MongoDB");
+    if (NODE_ENV === "development") {
+      mongoose.set("debug", true);
+      logger.info("🛠️ MongoDB Debug Mode Enabled");
+    }
+  } catch (err) {
     logger.error(`❌ MongoDB connection failed: ${err}`);
     process.exit(1);
-  });
+  }
+};
+connectDB();
 
 mongoose.connection.on("error", (err) => {
   logger.error(`❌ MongoDB error: ${err}`);
   process.exit(1);
 });
 
-if (NODE_ENV !== "production") {
-  mongoose.set("debug", true);
-  logger.info("🛠️ MongoDB Debug Mode Enabled");
-}
 
-// =============================
-// Start HTTP Server
-// =============================
-const server = app.listen(PORT, () => {
-  logger.info(`🚀 Server running at http://localhost:${PORT}`);
-});
+// =======================================================
+//                   Server Activation
+// =======================================================
+let server;
+const startServer = () => {
+  server = app.listen(PORT, HOST, () => {
+    logger.info(
+      `🚀 [${
+        NODE_ENV ? NODE_ENV.toUpperCase() : "DEVELOPMENT"
+      }] Server running at: http://${HOST}:${PORT}`
+    );
+  });
 
-// =============================
-// Socket.IO Setup
-// =============================
-const io = new Server(server, {
-  pingTimeout: 60000,
-  cors: {
-    origin: CLIENT_ENDPOINT,
-    credentials: true,
-  },
-});
+  // =======================================================
+  //                    Socket.IO Setup
+  // =======================================================
+  const io = new Server(server, {
+    pingTimeout: 60000,
+    cors: {
+      origin: CLIENT_ENDPOINT,
+      credentials: true,
+    },
+  });
 
-io.on("connection", (socket) => {
-  logger.info("🔌 Socket.IO client connected");
-  SocketServer(socket, io);
-});
+  io.on("connection", (socket) => {
+    logger.info("🔌 Socket.IO client connected");
+    SocketServer(socket, io);
+  });
+};
 
-// =============================
-// Global Error Handlers
-// =============================
+if (NODE_ENV !== "test") startServer();
+
+
+// =======================================================
+//                Global Error Handlers
+// =======================================================
 
 const exitHandler = () => {
   if (server) {
-    logger.info("🛑 Server closed");
+    server.close(() => {
+      logger.info("🛑 Server closed");
+      process.exit(1);
+    });
+  } else {
+    process.exit(1);
   }
-  process.exit(1);
 };
 
 const unexpectedErrorHandler = (error) => {
@@ -150,7 +216,17 @@ process.on("unhandledRejection", unexpectedErrorHandler);
 process.on("SIGTERM", () => {
   logger.info("📴 SIGTERM received");
   if (server) {
-    logger.info("🛑 Server closed due to SIGTERM");
+    server.close(() => {
+      logger.info("🛑 Server closed due to SIGTERM");
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
   }
-  process.exit(0);
 });
+
+
+// =======================================================
+//                     Export App
+// =======================================================
+export default app;
