@@ -1,3 +1,4 @@
+//routes/auth.route.js
 import express from "express"
 import trimRequest from "trim-request"
 import { login, logout, refreshtoken, register } from "../controllers/auth.controller.js"
