@@ -42,7 +42,7 @@ function Input({ message, setMessage, textRef, socket }) {
       <input
         type="text"
         placeholder="Type a message"
-        className="dark:bg-dark_hover_1 dark:text-dark_text_1 bg-white text-black rounded-full h-[45px] w-full px-4 shadow-sm outline-none transition duration-200 focus:ring-2 focus:ring-[#0EABF4]"
+        className="dark:bg-dark_bg_1 dark:text-dark_text_1 bg-white text-white rounded-full h-[45px] w-full px-4 shadow-sm outline-none transition duration-200 focus:ring-2 focus:ring-[#153713] placeholder:text-gray-300"
         value={message}
         onChange={onChangeHandler}
         ref={textRef}

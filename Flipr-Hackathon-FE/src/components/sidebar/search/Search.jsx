@@ -31,9 +31,9 @@ const Search = ({ searchLength, setSearchResults }) => {
   };
 
   return (
-    <div className="h-[52px] px-3 py-2 dark:bg-dark_bg_2">
+    <div className="h-[52px] px-3 py-2 dark:bg-dark_bg_4 border-b">
       <div className="flex items-center gap-2">
-        <div className="flex items-center w-full bg-dark_bg_1 dark:bg-dark_hover_1 rounded-xl px-3 py-1.5 focus-within:ring-2 ring-green_1">
+        <div className="flex items-center w-full bg-dark_bg_1 dark:bg-dark_1 rounded-xl px-3 py-1.5 focus-within:ring-2 ring-green_1">
           {show || searchLength > 0 ? (
             <span
               className="w-6 h-6 flex items-center justify-center rotateAnimation cursor-pointer"
@@ -49,14 +49,14 @@ const Search = ({ searchLength, setSearchResults }) => {
           <input
             type="text"
             placeholder="Search or start a chat"
-            className="bg-transparent outline-none px-2 text-sm w-full dark:text-dark_text_1 placeholder:text-dark_text_2"
+            className="dark:bg-dark_bg_1 outline-none px-2 text-sm w-full dark:text-dark_text_1 placeholder:text-white"
             onFocus={() => setShow(true)}
             onBlur={() => searchLength === 0 && setShow(false)}
             onKeyDown={(e) => handleSearch(e)}
           />
         </div>
         <button
-          className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-dark_bg_3 transition-colors"
+          className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-dark_bg_1 transition-colors"
           title="Filter"
         >
           <FilterIcon className="dark:fill-dark_svg_2 w-5 h-5" />

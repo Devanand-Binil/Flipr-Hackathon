@@ -8,10 +8,10 @@ export default function Sidebar({ onlineUsers, typing }) {
   const [searchResults, setSearchResults] = useState([]);
 
   return (
-    <div className="flex flex-col max-w-[30%] h-full bg-dark_bg_1 dark:border-r-dark_border_2 select-none overflow-hidden">
+    <div className="flex flex-col min-w-[280px] max-w-[20%] h-full bg-dark_bg_4 dark:border-r-white select-none overflow-hidden">
       <SidebarHeader />
 
-      <Notifications />
+      {/* <Notifications /> */}
 
       <Search searchLength={searchResults.length} setSearchResults={setSearchResults} />
 

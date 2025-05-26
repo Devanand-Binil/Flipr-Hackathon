@@ -4,10 +4,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        dark_bg_1: "#111B21",
+        dark_bg_1: "#606C38",
         dark_bg_2: "#202C33",
         dark_bg_3: "#182229",
-        dark_bg_4: "#222E35",
+        dark_bg_4: "#283618",
         dark_bg_5: "#233138",
         dark_bg_6: "#101A20",
         dark_border_1: "#222D34",

@@ -37,7 +37,7 @@ function ChatActions({ socket }) {
 
   return (
     <form
-      className="dark:bg-dark_bg_2 bg-white border-t dark:border-none h-[64px] w-full flex items-center absolute bottom-0 py-2 px-4 z-20 select-none shadow-inner"
+      className="dark:bg-dark_bg_4 border-t h-[64px] w-full flex items-center absolute bottom-0 py-2 px-4 z-20 select-none shadow-inner"
       onSubmit={SendMessageHandler}
     >
       <div className="w-full flex items-center gap-x-2">

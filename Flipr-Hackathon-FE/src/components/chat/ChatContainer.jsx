@@ -24,7 +24,7 @@ export default function ChatContainer({ onlineUsers, typing, callUser }) {
   }, [activeConversation]);
 
   return (
-    <div className="relative w-full h-full border-l dark:border-l-dark_border_2 select-none overflow-hidden">
+    <div className="relative w-full h-full border-l bg-[#283618] dark:border-l-dark_border_2 select-none overflow-hidden">
       <ChatHeader
         online={checkOnlineStatus(
           onlineUsers,

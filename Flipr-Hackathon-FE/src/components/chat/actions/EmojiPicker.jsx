@@ -32,7 +32,7 @@ const EmojiPickerApp = ({
   return (
     <li>
       <button
-        className="bg-[#FFBF00] hover:bg-yellow-400 text-white rounded-full p-2 transition duration-200 ease-in-out shadow-md"
+        className=" hover:bg-green-600-400 text-white rounded-full p-2 transition duration-200 ease-in-out shadow-md"
         type="button"
         onClick={() => {
           setShowAttachments(false);

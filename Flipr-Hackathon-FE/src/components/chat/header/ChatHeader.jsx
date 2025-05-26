@@ -19,7 +19,7 @@ const ChatHeader = ({ online, callUser, socket }) => {
   if (!activeConversation || !user) return null; // or show a loading state
 
   return (
-    <div className="h-[59px] dark:bg-dark_bg_2 flex items-center p-4 select-none">
+    <div className="h-[59px] dark:bg-dark_bg_4 border-b flex items-center p-4 select-none">
       <div className="w-full flex items-center justify-between">
         {/* Left side */}
         {activeConversation ? (
@@ -53,7 +53,7 @@ const ChatHeader = ({ online, callUser, socket }) => {
 
         {/* Right side */}
         <ul className="flex items-center gap-x-2.5">
-          <li onClick={() => callUser()}>
+          {/* <li onClick={() => callUser()}>
             <button className="btn hover:bg-dark_hover_1 focus:outline-none">
               <VideoCallIcon />
             </button>
@@ -62,8 +62,8 @@ const ChatHeader = ({ online, callUser, socket }) => {
             <button className="btn hover:bg-dark_hover_1 focus:outline-none">
               <CallIcon />
             </button>
-          </li>
-          <li>
+          </li> */}
+          {/* <li>
             <button className="btn hover:bg-dark_hover_1 focus:outline-none">
               <SearchLargeIcon className="dark:fill-dark_svg_1" />
             </button>
@@ -72,7 +72,7 @@ const ChatHeader = ({ online, callUser, socket }) => {
             <button className="btn hover:bg-dark_hover_1 focus:outline-none">
               <DotsIcon className="dark:fill-dark_svg_1" />
             </button>
-          </li>
+          </li> */}
         </ul>
       </div>
     </div>

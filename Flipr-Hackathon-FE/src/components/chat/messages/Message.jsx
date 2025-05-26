@@ -22,7 +22,7 @@ const Message = ({ message, me }) => {
         {/* Message Bubble */}
         <div
           className={`relative p-2 rounded-lg text-sm leading-relaxed ${
-            me ? "bg-green_3 text-white" : "dark:bg-dark_bg_2 dark:text-dark_text_1"
+            me ? "bg-green_3 text-white" : "dark:bg-dark_bg_1 dark:text-dark_text_1"
           }`}
         >
           {/* Message Text */}
@@ -39,7 +39,7 @@ const Message = ({ message, me }) => {
               className={`rotate-[60deg] absolute top-[-5px] ${
                 me
                   ? "fill-green_3 -right-2"
-                  : "dark:fill-dark_bg_2 -left-1.5"
+                  : "dark:fill-dark_bg_1 -left-1.5"
               }`}
             />
           </span>

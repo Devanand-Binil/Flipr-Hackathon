@@ -41,7 +41,7 @@ function Conversation({ convo, socket, online, typing }) {
     <li
       onClick={openConversation}
       className={`list-none w-full px-4 py-3 rounded-2xl transition-colors duration-200
-        ${isActive ? "bg-dark_hover_1" : "hover:bg-dark_bg_2"}
+        ${isActive ? "bg-dark_bg_1" : "hover:bg-dark_bg_1"}
         dark:text-dark_text_1 cursor-pointer`}
     >
       <div className="flex items-center gap-4">
@@ -65,7 +65,7 @@ function Conversation({ convo, socket, online, typing }) {
         {/* Info */}
         <div className="flex-1 flex flex-col">
           <div className="flex items-center justify-between">
-            <h1 className="font-semibold text-base truncate">
+            <h1 className="font-semibold text-lg text-base truncate">
               {convo?.isGroup
                 ? convo?.name
                 : capitalize(getConversationName(user, convo?.users))}
@@ -77,7 +77,7 @@ function Conversation({ convo, socket, online, typing }) {
             </span>
           </div>
 
-          <div className="text-sm text-gray-400 mt-1 truncate">
+          <div className="text-lg text-gray-400 mt-1 truncate">
             {typing === convo?._id ? (
               <span className="text-green_1">Typing...</span>
             ) : latestMsg.length > 25 ? (
