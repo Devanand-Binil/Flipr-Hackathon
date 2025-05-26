@@ -14,7 +14,7 @@ const Menu = ({ setShowCreateGroup }) => {
       aria-labelledby="menu-button"
     >
       <ul>
-        <li
+       {/* <li
           className="py-3 px-5 cursor-pointer hover:bg-dark_bg_3 transition-colors"
           onClick={() => setShowCreateGroup(true)}
           role="menuitem"
@@ -44,6 +44,7 @@ const Menu = ({ setShowCreateGroup }) => {
         >
           Settings
         </li>
+        */}
         <li
           className="py-3 px-5 cursor-pointer hover:bg-red-600 hover:text-white transition-colors"
           onClick={() => dispatch(logout())}
