@@ -10,8 +10,8 @@ import { useState } from "react";
 import Picture from "./Picture";
 import axios from "axios";
 
-const cloud_secret = import.meta.env.VITE_CLOUD_SECRET;
 const cloud_name = import.meta.env.VITE_CLOUD_NAME;
+const upload_preset = "unsigned_preset";
 
 export default function RegisterForm() {
   const dispatch = useDispatch();
@@ -27,6 +27,7 @@ export default function RegisterForm() {
   const onSubmit = async (data) => {
     let res;
     if (picture) {
+      console.log("Picture uploaded");
       await uploadImage().then(async (response) => {
         res = await dispatch(
           registerUser({
@@ -36,6 +37,7 @@ export default function RegisterForm() {
         );
       });
     } else {
+      console.log("No picture uploaded");
       res = await dispatch(
         registerUser({
           ...data,
@@ -49,10 +51,11 @@ export default function RegisterForm() {
 
   const uploadImage = async () => {
     let formData = new FormData();
-    formData.append("upload_preset", cloud_secret);
+    formData.append("upload_preset", upload_preset);
     formData.append("file", picture);
     const { data } = await axios.post(
-      `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,
+      `https://api.cloudinary.com/v1_1/${cloud_name}/raw/upload`,
+
       formData
     );
     console.log(data);
@@ -69,7 +72,7 @@ export default function RegisterForm() {
         {/*Form*/}
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
           <AuthInput
-            name="user"
+            name="username"
             type="text"
             placeholder="Full name"
             register={register}
@@ -110,8 +113,8 @@ export default function RegisterForm() {
           ) : null}
 
           <button
-            className="w-full flex justify-center bg-green_1 text-gray-100 p-4 rounded-full tracking-wide font-semibold
-                    focus:outline-none hover:bg-green_2 shadow-lg cursor-pointer transition ease-in duration-300"
+            className="w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold
+                    focus:outline-none hover:bg-blue-700 shadow-lg cursor-pointer transition ease-in duration-300"
             type="submit"
           >
             {status == "loading" ? (

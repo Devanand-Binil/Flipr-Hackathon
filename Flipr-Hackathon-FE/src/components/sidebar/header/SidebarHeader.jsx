@@ -26,7 +26,7 @@ export default function SidebarHeader() {
           </button>
 
           <ul className="flex items-center gap-x-2">
-            <li>
+           {/*} <li>
               <button className="btn" aria-label="Community" title="Community">
                 <CommunityIcon className="dark:fill-dark_svg_1" />
               </button>
@@ -41,6 +41,7 @@ export default function SidebarHeader() {
                 <ChatIcon className="dark:fill-dark_svg_1" />
               </button>
             </li>
+            */}
             <li className="relative" onClick={() => setShowMenu((prev) => !prev)}>
               <button
                 className={`btn ${showMenu ? "bg-dark_hover_1" : ""}`}

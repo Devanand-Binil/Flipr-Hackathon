@@ -5,13 +5,14 @@ import bcrypt from "bcrypt";
 
 const{DEFAULT_PICTURE,DEFAULT_STATUS}=process.env
 export const createUser=async(userData)=>{
-    const{name,email,picture,status,password}=userData;
-
+  console.log("Creating user with data:", userData);
+    const{username,email,picture,status,password}=userData;
+    console.log("User data:", username, email, picture, status, password);
     //validate empty fields
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
         throw createHttpError.BadRequest("Please fill all fields.");
       }
-    if (!validator.isLength(name,{min:2,max:16,})){
+    if (!validator.isLength(username,{min:2,max:16,})){
         throw createHttpError.BadRequest("Please make sure name is between 2 to 16 characters long");
     }
     if(status && status.length>64){
@@ -20,8 +21,9 @@ export const createUser=async(userData)=>{
     if(!validator.isEmail(email)){
       throw createHttpError.BadRequest("Please provide valid email address");
     }
-
+    console.log("Checking if email already exists in the database:", email);
     const checkDb = await UserModel.findOne({email});
+    console.log("dbcheck",checkDb);
     if(checkDb){
       throw createHttpError.Conflict("Email already exists");
     }
@@ -35,15 +37,35 @@ export const createUser=async(userData)=>{
 
 
     //adding user to database
-
-    const user=await new UserModel({
+    //console.log(name,email,picture,status,password);
+   /* const userDoc = await new UserModel({
       name,
       email,
-      picture:picture || DEFAULT_PICTURE,
-      status:status || DEFAULT_STATUS,
+      picture: picture || DEFAULT_PICTURE,
+      status: status || DEFAULT_STATUS,
       password
-    }).save()
+    }).save();
+    */
+    let userDoc;
+    try {
+      userDoc = await new UserModel({
+        username,
+        email,
+        picture: picture || DEFAULT_PICTURE,
+        status: status || DEFAULT_STATUS,
+        password,
+      }).save();
+    } catch (saveError) {
+      console.error("❌ Error while saving user:", saveError);
+      throw saveError;
+    }
 
+    // Convert to plain object before logging and returning
+    const user = userDoc.toObject();
+    delete user.password;
+    
+    console.log("User created:", user);
+    
     return user;
 
 };
