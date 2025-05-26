@@ -55,8 +55,8 @@ export default function LoginForm() {
           ) : null}
 
           <button
-            className="w-full flex justify-center bg-green_1 text-gray-100 p-4 rounded-full tracking-wide font-semibold
-                    focus:outline-none hover:bg-green_2 shadow-lg cursor-pointer transition ease-in duration-300"
+            className="w-full flex justify-center bg-blue-500 text-gray-100 p-4 rounded-full tracking-wide font-semibold
+                    focus:outline-none hover:bg-blue-700 shadow-lg cursor-pointer transition ease-in duration-300"
             type="submit"
           >
             {status == "loading" ? (

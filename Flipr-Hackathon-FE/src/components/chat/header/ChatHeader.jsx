@@ -53,7 +53,7 @@ const ChatHeader = ({ online, callUser, socket }) => {
 
         {/* Right side */}
         <ul className="flex items-center gap-x-2.5">
-          <li onClick={() => callUser()}>
+          {/*<li onClick={() => callUser()}>
             <button className="btn hover:bg-dark_hover_1 focus:outline-none">
               <VideoCallIcon />
             </button>
@@ -63,6 +63,7 @@ const ChatHeader = ({ online, callUser, socket }) => {
               <CallIcon />
             </button>
           </li>
+          */}
           <li>
             <button className="btn hover:bg-dark_hover_1 focus:outline-none">
               <SearchLargeIcon className="dark:fill-dark_svg_1" />

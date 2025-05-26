@@ -5,15 +5,16 @@ import { findUser } from "../services/user.service.js";
 export const register = async (req,res,next)=>{
 
     try{
-        const{name,email,picture,status,password}=req.body;
+        const{username,email,picture,status,password}=req.body;
         console.log("Registering user with email:", email);
         const newUser=await createUser({
-            name,
+            username,
             email,
             picture,
             status,
             password,
         });
+        console.log("New user created:", newUser);
         const access_token=await generateToken({userId:newUser._id},"1d",process.env.ACCESS_TOKEN_SECRET);
         const refresh_token=await generateToken({userId:newUser._id},"30d",process.env.REFRESH_TOKEN_SECRET);
 
